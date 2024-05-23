@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta CEP</title>
+    <style>
+        h1{
+            margin-left: 40%;
+        }
+        #consulta {
+            margin-left: 40%;
+            margin-top: 50px;
+            border-radius: 83px;
+            border-color: black;
+        }
+        button{
+            border-radius: 50px;
+            background-color: #000000;
+            color: #ffffff;
+            height: 30px;
+            width: 80px;
+        }
+        button:hover{
+            background-color: #ffffff;
+            color: #000000;
+            transition: 0.6s;
+        }
+        #informacoes{
+            text-align: center;
+            padding-top: 30px;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Consulta CEP de SP</h1>
+    <input type="text" id="consulta">
+    <button type="button" onclick="buscarCEP()">Pesquisar</button>
+
+    <div id="informacoes"></div>
+
+    <script>
+        function buscarCEP(){
+            const consultaInput = document.getElementById("consulta").value
+
+            window.fetch(`https://viacep.com.br/ws/${consultaInput}/json/`)
+                .then((respostaAPI) => respostaAPI.json())
+                .then((dados) => {
+                    const divCEP = document.getElementById("informacoes")
+                
+                    if (dados.erro) {
+                        divCEP.innerText = "CEP inválido"
+                        return
+                    }
+
+                    if (dados.uf === "SP") {
+                        divCEP.innerHTML = `
+                            <p>CEP: ${dados.cep}</p>
+                            <p>Logradouro: ${dados.logradouro}</p>
+                            <p>Bairro: ${dados.bairro}</p>
+                            <p>Cidade: ${dados.localidade}</p>`
+                    } 
+                    else {
+                        divCEP.innerText = "o CEP digitado não consta no estado de São Paulo, favor digitar um CEP válido"
+                    }
+                })  
+                .catch((erro) => {
+                    const divCEP = document.getElementById("informacoes");
+                    divCEP.innerText = "Erro ao conectar na API. Por favor, tente novamente.";
+                })
+        }
+    </script>
+</body>
+</html>
